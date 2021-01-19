@@ -36,7 +36,7 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:padding="13.0dip"
-                android:src="@drawable/ic_image"
+                android:src="@drawable/location"
                 android:tint="@color/grey_40" />
 
             <EditText
@@ -47,15 +47,6 @@
                 android:background="@android:color/transparent"
                 android:hint="Message"
                 android:imeOptions="actionSearch" />
-
-            <ImageView
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:background="?selectableItemBackground"
-                android:clickable="true"
-                android:padding="14.0dip"
-                android:src="@drawable/ic_attach_file"
-                android:tint="@color/grey_40" />
 
             <ImageView
                 android:id="@+id/message_send_btn"

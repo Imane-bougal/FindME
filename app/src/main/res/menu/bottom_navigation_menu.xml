@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.imaneb.findme.ui.main.MainActivity">
+    <item
+        android:id="@+id/page_location"
+        android:enabled="true"
+        android:icon="@drawable/location"
+        android:title="@string/action_locations"/>
+    <item
+        android:id="@+id/page_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/action_home"/>
+    <item
+        android:id="@+id/page_settings"
+        android:enabled="true"
+        android:icon="@drawable/settings"
+        android:title="@string/action_settings"/>
+    <item
+        android:id="@+id/page_account"
+        android:enabled="true"
+        android:icon="@drawable/account"
+        android:title="@string/action_account"/>
+
+
+
+</menu>

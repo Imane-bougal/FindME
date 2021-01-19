@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.internal.$Gson$Preconditions;
 import com.imaneb.findme.MapsActivity;
 import com.imaneb.findme.R;
 import com.imaneb.findme.ui.account.AccountActivity;
@@ -24,6 +26,7 @@ public class MainActivity extends DaggerAppCompatActivity {
 
     private ViewPager2 viewPager2;
     private TabLayout tabLayout;
+    BottomNavigationView bottomNavigationView;
 
 
     @Override
@@ -32,6 +35,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         setContentView(R.layout.activity_main);
         intToolbar();
         intView();
+        initBottomNavigation();
 
 
     }
@@ -39,6 +43,7 @@ public class MainActivity extends DaggerAppCompatActivity {
     private void intView() {
         viewPager2 = findViewById(R.id.view_pager);
         tabLayout = findViewById(R.id.tab_layout);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager2.setAdapter(new ConnectionsPageAdapter(this));
 
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -50,12 +55,12 @@ public class MainActivity extends DaggerAppCompatActivity {
                         tab.setIcon(R.drawable.ic_chat);
                         break;
                     case 1:
-                        tab.setText("Notifications");
+                        tab.setText("Requests");
                         tab.setIcon(R.drawable.ic_notifications);
                         BadgeDrawable badgeDrawable = tab.getOrCreateBadge();
                         badgeDrawable.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorBadge));
                         badgeDrawable.setVisible(true);
-                        badgeDrawable.setNumber(5);
+                        badgeDrawable.setNumber(1);
                         break;
                     case 2:
                         tab.setText("Users");
@@ -73,6 +78,29 @@ public class MainActivity extends DaggerAppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Connections");
         toolbar.setNavigationIcon(R.drawable.ic_nav);
+    }
+    private  void initBottomNavigation(){
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.page_home) {
+                    moveToMain();
+                }
+                if (id == R.id.page_location) {
+                    moveToMap();
+                }
+                if (id == R.id.page_account) {
+                    moveToAccountSetting();
+                }
+                if (id == R.id.page_settings) {
+                    moveToSettings();
+                }
+                return false;
+
+            }
+        });
     }
 
     @Override
@@ -97,7 +125,13 @@ public class MainActivity extends DaggerAppCompatActivity {
     private void moveToMap() {
         startActivity( new Intent(MainActivity.this, MapsActivity.class));
     }
-
+    private void moveToMain() {
+        startActivity( new Intent(MainActivity.this, MainActivity.class));
+    }
+    private void moveToSettings() {
+        //todo
+        startActivity( new Intent(MainActivity.this, MapsActivity.class));
+    }
     private void moveToAccountSetting() {
         startActivity( new Intent(MainActivity.this, AccountActivity.class));
     }
