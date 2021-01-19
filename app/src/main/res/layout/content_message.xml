@@ -31,6 +31,7 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/locate_btn"
                 android:layout_width="50.0dip"
                 android:layout_height="50.0dip"
                 android:background="?selectableItemBackground"

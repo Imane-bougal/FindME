@@ -13,4 +13,5 @@
     <string name="action_locations">locations</string>
     <string name="action_account">profile</string>
     <string name="action_home">home</string>
+    <string name="title_activity_map_friend">Map</string>
 </resources>

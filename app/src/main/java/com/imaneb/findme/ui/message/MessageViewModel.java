@@ -1,17 +1,20 @@
 package com.imaneb.findme.ui.message;
 
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.imaneb.findme.MapsActivity;
 import com.imaneb.findme.data.model.Message;
 import com.imaneb.findme.data.model.User;
 import com.imaneb.findme.data.repository.DatabaseRepository;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.imaneb.findme.ui.main.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +125,37 @@ public class MessageViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+    public String LocateFriend(){
+        final String[] imei = new String[1];
+        databaseRepository.getUserinfo(PROFILE_UID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .toObservable()
+                .subscribe(new Observer<DocumentSnapshot>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(DocumentSnapshot documentSnapshot) {
+                        User user = documentSnapshot.toObject(User.class);
+                        imei[0] = user.getImei();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+        return imei[0];
     }
 
     public void sendMessage(Message message){

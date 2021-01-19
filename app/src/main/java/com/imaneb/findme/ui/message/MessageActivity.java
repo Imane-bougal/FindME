@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
+import com.imaneb.findme.MapFriendActivity;
 import com.imaneb.findme.R;
 import com.imaneb.findme.adapter.MessageRecyclerAdapter;
 import com.imaneb.findme.data.model.Message;
@@ -36,6 +37,7 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
     private MessageViewModel messageViewModel;
     private EditText messageInput;
     private ImageView messageSendBtn;
+    private ImageView locatebtn;
     private RecyclerView recyclerView;
     private MessageRecyclerAdapter messageRecyclerAdapter = new MessageRecyclerAdapter();;
 
@@ -101,8 +103,10 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
     private void intView() {
         messageInput = findViewById(R.id.message_input);
         messageSendBtn = findViewById(R.id.message_send_btn);
+        locatebtn = findViewById(R.id.locate_btn);
         recyclerView = findViewById(R.id.recyclerView);
         messageSendBtn.setOnClickListener(this);
+        locatebtn.setOnClickListener(this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -135,16 +139,27 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.message_send_btn:
-                sendMessage();
+        int id = v.getId();
+        if (id == R.id.message_send_btn) {
+            sendMessage();
         }
+        if (id == R.id.locate_btn) {
+            locateFriend();
+        }
+    }
+
+    private void locateFriend() {
+        String imei = messageViewModel.LocateFriend();
+        Intent i = new Intent(MessageActivity.this, MapFriendActivity.class);
+        i.putExtra("Fimei", imei);
+        startActivity(i);
+
     }
 
     private void sendMessage() {
         String inputMessage = messageInput.getText().toString();
-        if (!inputMessage.isEmpty()){
-            Message message = new Message(Constants.TEXT_TYPE,inputMessage,"default");
+        if (!inputMessage.isEmpty()) {
+            Message message = new Message(Constants.TEXT_TYPE, inputMessage, "default");
             messageViewModel.sendMessage(message);
             messageInput.setText("");
         }
