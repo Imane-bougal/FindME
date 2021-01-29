@@ -1,10 +1,15 @@
 package com.imaneb.findme.dataSource.remote;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.MediatorLiveData;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -12,10 +17,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -30,8 +37,13 @@ import com.imaneb.findme.data.model.User;
 import com.imaneb.findme.utils.Constants;
 import com.imaneb.findme.utils.DataConverter;
 
+import org.w3c.dom.Document;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -42,13 +54,19 @@ import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Cancellable;
+import io.reactivex.schedulers.Schedulers;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class FirebaseDataSource {
-
     private static final String TAG = "FirebaseDataSource";
 
     private FirebaseAuthSource firebaseAuthSource;
@@ -62,17 +80,33 @@ public class FirebaseDataSource {
         this.firebaseFirestore = firebaseFirestore;
         this.storageReference = storageReference;
         currentUid = firebaseAuthSource.getCurrentUid();
+
+
     }
 
     //fireStore users list
     private Query getUsersQuery() {
-        return firebaseFirestore.collection(Constants.USERS_NODE);
+        String s = Constants.getConstraint_gender();
+
+        if ( s =="All"){
+            return firebaseFirestore.collection(Constants.USERS_NODE);
+        }
+        if( s == null){
+            return firebaseFirestore.collection(Constants.USERS_NODE);
+        }else {
+            return firebaseFirestore.collection(Constants.USERS_NODE).whereEqualTo("gender", s);
+        }
+
     }
+
     public FirestoreRecyclerOptions<User> getUserList() {
+
         return new FirestoreRecyclerOptions.Builder<User>()
                 .setQuery(getUsersQuery(), User.class)
                 .build();
     }
+
+
 
     //fireStore request list
     private Query getRequestQuery(){
@@ -87,6 +121,7 @@ public class FirebaseDataSource {
                 .build();
     }
 
+
     //fireStore friend list
     private Query getFriendQuery(){
         return firebaseFirestore.collection(Constants.FRIEND_REQUEST_NODE)
@@ -99,7 +134,6 @@ public class FirebaseDataSource {
                 .setQuery(getFriendQuery(),Request.class)
                 .build();
     }
-
     //get chat list
     private Query getChatListQuery(String uid){
         return firebaseFirestore.collection(Constants.MESSAGE_NODE).document(currentUid).collection(uid);
@@ -109,7 +143,6 @@ public class FirebaseDataSource {
                 .setQuery(getChatListQuery(uid),Message.class)
                 .build();
     }
-
     //get user information
     public Flowable<DocumentSnapshot> getUserInfo(final String uid) {
         return Flowable.create(new FlowableOnSubscribe<DocumentSnapshot>() {
@@ -161,6 +194,71 @@ public class FirebaseDataSource {
             }
         });
     }
+
+    public Completable updateConstraints(final int minAge,final  String gender) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
+                HashMap<String, Object> constraintData = new HashMap<>();
+                constraintData.put("constraint_minAge",minAge);
+                constraintData.put("constraint_gender",gender);
+                DocumentReference reference = firebaseFirestore.collection(Constants.USERS_NODE).document(currentUid);
+                reference.update("constraints", constraintData).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                emitter.onError(e);
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                emitter.onComplete();
+                            }
+                        });
+            }
+        });
+
+    }
+    // add friend to friend list
+    public Completable updateFriendList(final String req_imei,final String req_uid,final String current_imei){
+
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
+                HashMap<String, Object> constraintData = new HashMap<>();
+
+                DocumentReference reference = firebaseFirestore.collection(Constants.USERS_NODE).document(currentUid);
+                reference.update("friends", FieldValue.arrayUnion(req_imei)).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        emitter.onError(e);
+                    }
+                })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                emitter.onComplete();
+                            }
+                        });
+                DocumentReference referenceReq = firebaseFirestore.collection(Constants.USERS_NODE).document(req_uid);
+                referenceReq.update("friends", FieldValue.arrayUnion(current_imei)).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        emitter.onError(e);
+                    }
+                })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                emitter.onComplete();
+                            }
+                        });
+            }
+        });
+
+    }
+
+    // remove friend from friend list
 
     //update displayImage
     public Completable updateDisplayImage(final Bitmap bitmap) {

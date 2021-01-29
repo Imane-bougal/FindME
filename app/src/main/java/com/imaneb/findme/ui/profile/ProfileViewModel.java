@@ -117,6 +117,7 @@ public class ProfileViewModel extends ViewModel {
 
     //Accept friend request
     public void acceptFriendRequest(){
+
         databaseRepository.acceptFriendRequest(PROFILE_UID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -192,6 +193,25 @@ public class ProfileViewModel extends ViewModel {
         return onRequest;
     }
 
+    public void updateFriendList(String imei,String current_imei){
+        databaseRepository.updateFriendList(imei,PROFILE_UID,current_imei)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+    }
     @Override
     protected void onCleared() {
         super.onCleared();

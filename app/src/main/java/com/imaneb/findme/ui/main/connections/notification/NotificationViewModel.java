@@ -72,6 +72,25 @@ public class NotificationViewModel extends ViewModel {
                 });
     }
 
+    public void updateFriendList(String imei,String PROFILE_UID,String current_imei){
+        databaseRepository.updateFriendList(imei,PROFILE_UID,current_imei)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+    }
     @Override
     protected void onCleared() {
         super.onCleared();

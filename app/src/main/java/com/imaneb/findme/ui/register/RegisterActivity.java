@@ -230,7 +230,6 @@ public class RegisterActivity extends DaggerAppCompatActivity implements View.On
 
     private void setinscrition(String email, String password, String name, String imei, String birthday, String gender) {
         // Post params to be sent to the server
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         HashMap<String, String> map = new HashMap<>();
         map.put("email", email);
         map.put("password", password);
@@ -241,6 +240,8 @@ public class RegisterActivity extends DaggerAppCompatActivity implements View.On
         map.put("imei", imei);
         map.put("birthday", birthday);
         map.put("phone", "default");
+        map.put("constraint_gender","All");
+        map.put("constraint_Age","18");
         JsonObjectRequest req = new JsonObjectRequest(insertUrl, new JSONObject(map),
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -251,7 +252,7 @@ public class RegisterActivity extends DaggerAppCompatActivity implements View.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 NetworkResponse response = error.networkResponse;
-                System.out.println("****not working : "+ error);
+                System.out.println("****not working ****: "+ error);
                 if (error instanceof ServerError && response != null) {
                     try {
                         String res = new String(response.data,

@@ -1,6 +1,8 @@
 package com.imaneb.findme.di.main.users;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.bumptech.glide.RequestManager;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -13,7 +15,6 @@ import dagger.Provides;
 
 @Module
 public class UserModule {
-
 
     @Provides
     static FirestoreRecyclerOptions<User> provideOption(DatabaseRepository databaseRepository){

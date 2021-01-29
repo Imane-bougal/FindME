@@ -104,7 +104,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        initBottomNavigation();
     }
 
     @Override
@@ -200,43 +199,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // add the request object to the queue to be executed
         requestQueue.add(req);
-    }
-
-    private  void initBottomNavigation(){
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.page_home) {
-                    moveToMain();
-                }
-                if (id == R.id.page_location) {
-                    moveToMap();
-                }
-                if (id == R.id.page_account) {
-                    moveToAccountSetting();
-                }
-                if (id == R.id.page_settings) {
-                    moveToSettings();
-                }
-                return false;
-            }
-        });
-    }
-
-    private void moveToMap() {
-        startActivity( new Intent(this, MapsActivity.class));
-    }
-    private void moveToMain() {
-        startActivity( new Intent(this, MainActivity.class));
-    }
-    private void moveToSettings() {
-        //todo
-        startActivity( new Intent(this, MapsActivity.class));
-    }
-
-    private void moveToAccountSetting() {
-        startActivity( new Intent(this, AccountActivity.class));
     }
 }

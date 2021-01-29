@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.imaneb.findme.utils.Constants;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -60,6 +61,7 @@ public class FirebaseAuthSource {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 //create new user in firebase
                                 HashMap<String, Object> map = new HashMap<>();
+
                                 map.put("email",email);
                                 map.put("displayName",name);
                                 map.put("image","default");
@@ -68,7 +70,16 @@ public class FirebaseAuthSource {
                                 map.put("gender", gender);
                                 map.put("imei" , imei);
                                 map.put("birthday", birthday);
-                                map.put("phone", "default");
+                                map.put("telephone", "default");
+                                map.put("friends", Arrays.asList(""));
+
+                                HashMap<String, Object> constraintData = new HashMap<>();
+                                constraintData.put("constraint_minAge",18);
+                                constraintData.put("constraint_gender","All");
+
+
+                                map.put("constraints",constraintData);
+
 
                                 firebaseFirestore.collection(Constants.USERS_NODE)
                                         .document(getCurrentUid()).set(map)

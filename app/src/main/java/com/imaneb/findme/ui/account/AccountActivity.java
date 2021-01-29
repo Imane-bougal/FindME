@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.bumptech.glide.RequestManager;
 import com.imaneb.findme.HomeActivity;
 import com.imaneb.findme.R;
 import com.imaneb.findme.data.model.User;
+import com.imaneb.findme.utils.Constants;
 import com.imaneb.findme.utils.DataConverter;
 import com.imaneb.findme.utils.InputDialog;
 import com.imaneb.findme.utils.LoadingDialog;
@@ -36,6 +38,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerAppCompatActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
+import me.mutasem.booleanselection.BooleanSelectionView;
 
 public class AccountActivity extends DaggerAppCompatActivity implements View.OnClickListener, InputDialog.ChangeStatusListener {
 
@@ -53,11 +56,16 @@ public class AccountActivity extends DaggerAppCompatActivity implements View.OnC
 
     private CircleImageView profileImage;
     private TextView displayName;
-    private TextView status;
+    private TextView status, ageView;
     private Button changeStatus;
     private Button changeImage;
     private Button logoutBtn;
+    private Button changeConstraints;
 
+    private SeekBar sBar;
+    BooleanSelectionView gender;
+    private String genderselected = "All";
+    private int min_Age = 18;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +137,10 @@ public class AccountActivity extends DaggerAppCompatActivity implements View.OnC
                     status.setText(user.getStatus());
                 }
                 displayName.setText(user.getDisplayName());
+
+                System.out.println("geting constraints "+ (String.valueOf(user.getConstraints().get("constraint_minAge"))));
+                sBar.setProgress(Integer.parseInt(String.valueOf(user.getConstraints().get("constraint_minAge"))));
+                ageView.setText((String.valueOf(user.getConstraints().get("constraint_minAge"))));
             }
         });
     }
@@ -136,13 +148,52 @@ public class AccountActivity extends DaggerAppCompatActivity implements View.OnC
     private void intView() {
         profileImage = findViewById(R.id.profile_image);
         displayName = findViewById(R.id.display_name);
+
+        sBar = (SeekBar) findViewById(R.id.seekBar);
+        ageView = findViewById(R.id.ageView);
+        ageView.setText(min_Age+"");
+        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int pval = 18;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pval = progress;
+                ageView.setText(pval+"");
+                min_Age = pval;
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //write custom code to on start progress
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                ageView.setText(pval+"");
+                min_Age = pval;
+            }
+        });
+
         status = findViewById(R.id.status_view);
         changeImage = findViewById(R.id.change_image_btn);
         changeStatus = findViewById(R.id.change_status_btn);
         logoutBtn = findViewById(R.id.logout_btn);
+        changeConstraints = findViewById(R.id.change_constraint_btn);
+
         changeImage.setOnClickListener(this);
         changeStatus.setOnClickListener(this);
         logoutBtn.setOnClickListener(this);
+        changeConstraints.setOnClickListener(this);
+
+
+        gender = findViewById(R.id.gender);
+        gender.setSelection(BooleanSelectionView.Selection.End);
+        gender.setSelectionListener(new BooleanSelectionView.SelectionListener() {
+            @Override
+            public void onSelectionChanged(int selection, String selectedText) {
+                genderselected = selectedText;
+            }
+        });
+
+
+
     }
 
     private void intToolbar() {
@@ -165,7 +216,18 @@ public class AccountActivity extends DaggerAppCompatActivity implements View.OnC
             case R.id.logout_btn:
                 performLogout();
                 break;
+            case R.id.change_constraint_btn:
+                System.out.println("####### Constraints######"+ min_Age+" "+genderselected);
+                updateConstraint(min_Age,genderselected);
+                break;
         }
+    }
+
+    private void updateConstraint(int min_age, String genderselected) {
+
+        accountViewModel.updateConstraint(min_age,genderselected);
+        Constants.setConstraint_gender(genderselected);
+        Constants.setConstraint_age(min_age);
     }
 
     private void performLogout() {

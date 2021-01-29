@@ -1,7 +1,9 @@
 package com.imaneb.findme.ui.profile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +41,8 @@ public class ProfileActivity extends DaggerAppCompatActivity implements View.OnC
     private TextView displayStatus;
     private Button actionBtn;
     private Button declineBtn;
+    private String friendImei;
+    TelephonyManager telephonyManager;
     @Inject
     ViewModelProviderFactory providerFactory;
     @Inject
@@ -50,6 +54,7 @@ public class ProfileActivity extends DaggerAppCompatActivity implements View.OnC
         setContentView(R.layout.activity_profile);
         intToolbar();
         intView();
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         profileViewModel = new ViewModelProvider(getViewModelStore(), providerFactory).get(ProfileViewModel.class);
         getUserInfo();
         observeUserInfo();
@@ -80,6 +85,7 @@ public class ProfileActivity extends DaggerAppCompatActivity implements View.OnC
                     displayStatus.setText(user.getStatus());
                 }
                 displayName.setText(user.getDisplayName());
+                friendImei = user.getImei();
             }
         });
     }
@@ -193,6 +199,8 @@ public class ProfileActivity extends DaggerAppCompatActivity implements View.OnC
     }
 
     private void acceptFriendRequest() {
+        String imei = telephonyManager.getDeviceId();
+        profileViewModel.updateFriendList(friendImei,imei);
         profileViewModel.acceptFriendRequest();
     }
 

@@ -1,5 +1,8 @@
 package com.imaneb.findme.data.model;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class User {
 
     private String email;
@@ -11,10 +14,19 @@ public class User {
     private String birthday;
     private String gender;
     private boolean online;
+    private List<String> friends;
+    private HashMap<String, Object> constraints;
 
 
+    public List<String> getFriends() {
+        return friends;
+    }
 
-    public User(String email, String displayName, String image, String status, String telephone, String imei, String birthday, String gender, boolean online) {
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
+    }
+
+    public User(String email, String displayName, String image, String status, String telephone, String imei, String birthday, String gender, boolean online, List<String> frindsImeis, HashMap<String, Object> constraints) {
         this.email = email;
         this.displayName = displayName;
         this.image = image;
@@ -24,7 +36,19 @@ public class User {
         this.birthday = birthday;
         this.gender = gender;
         this.online = online;
+        this.friends = frindsImeis;
+        this.constraints = constraints;
     }
+
+
+    public HashMap<String, Object> getConstraints() {
+        return constraints;
+    }
+
+    public void setConstraints(HashMap<String, Object> constraints) {
+        this.constraints = constraints;
+    }
+
     public String getBirthday() {
         return birthday;
     }

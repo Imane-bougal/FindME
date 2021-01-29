@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.imaneb.findme">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -12,8 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
 
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
     <application
         android:name=".BaseActivity"
         android:allowBackup="true"
@@ -23,7 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -38,7 +39,7 @@
 
         <activity
             android:name=".MapFriendActivity"
-            android:label="@string/title_activity_map_friend"></activity>
+            android:label="@string/title_activity_map_friend" />
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />

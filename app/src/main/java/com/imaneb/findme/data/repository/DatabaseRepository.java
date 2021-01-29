@@ -46,6 +46,14 @@ public class DatabaseRepository {
         return firebaseDataSource.updateStatus(status);
     }
 
+    public Completable updateConstraints(int min_age,String gender) {
+        return firebaseDataSource.updateConstraints(min_age,gender);
+    }
+
+    public Completable updateFriendList(String imei,String req_uid,String current_imei) {
+        return firebaseDataSource.updateFriendList(imei,req_uid,current_imei);
+    }
+
     public Completable updateDisplayImage(Bitmap bitmap) {
         return firebaseDataSource.updateDisplayImage(bitmap);
     }

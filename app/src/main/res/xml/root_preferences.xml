@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/Friends_header">
+
+        <ListPreference
+            app:defaultValue="false"
+            app:entries="@array/gender_entries"
+            app:entryValues="@array/gender_values"
+            app:key="gender"
+            app:title="@string/gender_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <SeekBarPreference
+            android:id="@+id/preference_age_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/seek_bar_default"
+            android:max="@integer/seek_bar_max"
+            android:summary="Select minimum Age of users"
+            android:title="Age"
+            app:key="Age"
+            app:min="@integer/seek_bar_min"
+            app:showSeekBarValue="true" />
+            />
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

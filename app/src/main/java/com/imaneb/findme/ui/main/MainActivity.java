@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.internal.$Gson$Preconditions;
 import com.imaneb.findme.MapsActivity;
 import com.imaneb.findme.R;
+import com.imaneb.findme.SettingsActivity;
 import com.imaneb.findme.ui.account.AccountActivity;
 import com.imaneb.findme.ui.main.connections.ConnectionsPageAdapter;
 import com.google.android.material.badge.BadgeDrawable;
@@ -129,8 +130,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         startActivity( new Intent(MainActivity.this, MainActivity.class));
     }
     private void moveToSettings() {
-        //todo
-        startActivity( new Intent(MainActivity.this, MapsActivity.class));
+        startActivity( new Intent(MainActivity.this, SettingsActivity.class));
     }
     private void moveToAccountSetting() {
         startActivity( new Intent(MainActivity.this, AccountActivity.class));

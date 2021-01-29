@@ -42,6 +42,7 @@ public class AccountViewModel extends ViewModel {
         loadUserInfo(uid);
     }
 
+
     private void loadUserInfo(String uid) {
         databaseRepository.getUserinfo(uid)
                 .subscribeOn(Schedulers.io())
@@ -67,6 +68,26 @@ public class AccountViewModel extends ViewModel {
                     @Override
                     public void onComplete() {
 
+                    }
+                });
+    }
+
+    public void updateConstraint(int min_age,String gender){
+        databaseRepository.updateConstraints(min_age,gender)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
                     }
                 });
     }
