@@ -1,6 +1,7 @@
 package com.imaneb.findme.ui.main.connections.notification;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.imaneb.findme.R;
 import com.imaneb.findme.adapter.RequestRecyclerAdapter;
+import com.imaneb.findme.ui.profile.ProfileActivity;
 import com.imaneb.findme.viewModels.ViewModelProviderFactory;
 
 import javax.inject.Inject;
@@ -77,20 +79,13 @@ public class NotificationFragment extends DaggerFragment implements RequestRecyc
     }
 
     @Override
-    public void onAcceptAction(String uid) {
-        acceptFriendRequest(uid);
+    public void onViewProfileAction(String uid) {
+        moveToProfileActivity(uid);
     }
 
-    @Override
-    public void onDeclineAction(String uid) {
-        declineFriendRequest(uid);
-    }
-
-    private void acceptFriendRequest(String uid) {
-        notificationViewModel.acceptFriendRequest(uid);
-    }
-
-    private void declineFriendRequest(String uid) {
-        notificationViewModel.declineFriendRequest(uid);
+    private void moveToProfileActivity(String id) {
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+        intent.putExtra("key_uid",id);
+        startActivity(intent);
     }
 }

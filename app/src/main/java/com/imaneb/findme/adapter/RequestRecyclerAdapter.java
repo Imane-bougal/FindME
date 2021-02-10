@@ -96,35 +96,27 @@ public class RequestRecyclerAdapter extends FirestoreRecyclerAdapter<Request, Re
         TextView displayName;
         TextView timeView;
         TextView requestTextView;
-        Button acceptBtn;
-        Button declineBtn;
+        Button profileBtn;
+
 
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
             displayName = itemView.findViewById(R.id.display_name);
             timeView = itemView.findViewById(R.id.time);
             requestTextView = itemView.findViewById(R.id.request_text);
-            acceptBtn = itemView.findViewById(R.id.accept_btn);
-            declineBtn = itemView.findViewById(R.id.decline_btn);
+            profileBtn = itemView.findViewById(R.id.profile_btn);
 
-            acceptBtn.setOnClickListener(new View.OnClickListener() {
+
+            profileBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onAcceptAction(getSnapshots().getSnapshot(getAdapterPosition()).getId());
-                }
-            });
-
-            declineBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onDeclineAction(getSnapshots().getSnapshot(getAdapterPosition()).getId());
+                    listener.onViewProfileAction(getSnapshots().getSnapshot(getAdapterPosition()).getId());
                 }
             });
         }
     }
 
     public interface onButtonClickListener{
-        void onAcceptAction(String uid);
-        void onDeclineAction(String uid);
+        void onViewProfileAction(String uid);
     }
 }

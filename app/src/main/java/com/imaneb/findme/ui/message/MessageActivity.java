@@ -39,7 +39,7 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
     private ImageView messageSendBtn;
     private ImageView locatebtn;
     private RecyclerView recyclerView;
-    private MessageRecyclerAdapter messageRecyclerAdapter = new MessageRecyclerAdapter();;
+    private MessageRecyclerAdapter messageRecyclerAdapter = new MessageRecyclerAdapter();
 
     @Inject
     ViewModelProviderFactory providerFactory;

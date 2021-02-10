@@ -22,7 +22,7 @@ public class UserModule {
     }
 
     @Provides
-    static UsersRecyclerAdapter provideAdapter(FirestoreRecyclerOptions<User> options, RequestManager requestManager, Application application){
-        return new UsersRecyclerAdapter(options,requestManager);
+    static UsersRecyclerAdapter provideAdapter(FirestoreRecyclerOptions<User> options,DatabaseRepository databaseRepository, RequestManager requestManager, Application application){
+        return new UsersRecyclerAdapter(options,databaseRepository,requestManager);
     }
 }

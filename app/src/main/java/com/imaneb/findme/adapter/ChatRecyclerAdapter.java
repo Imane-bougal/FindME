@@ -34,6 +34,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Request, ChatR
     private CompositeDisposable disposable = new CompositeDisposable();
 
 
+
     public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<Request> options , DatabaseRepository databaseRepository, RequestManager requestManager) {
         super(options);
         this.databaseRepository = databaseRepository;

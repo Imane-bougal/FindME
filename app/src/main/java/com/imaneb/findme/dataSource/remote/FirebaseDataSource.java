@@ -87,6 +87,7 @@ public class FirebaseDataSource {
     //fireStore users list
     private Query getUsersQuery() {
         String s = Constants.getConstraint_gender();
+        Log.d(TAG, "Constraint Gender "+s);
 
         if ( s =="All"){
             return firebaseFirestore.collection(Constants.USERS_NODE);
@@ -107,7 +108,6 @@ public class FirebaseDataSource {
     }
 
 
-
     //fireStore request list
     private Query getRequestQuery(){
         return firebaseFirestore.collection(Constants.FRIEND_REQUEST_NODE)
@@ -115,12 +115,12 @@ public class FirebaseDataSource {
                 .collection(Constants.REQUEST_NODE)
                 .whereEqualTo("requestType","received");
     }
+
     public FirestoreRecyclerOptions<Request> getRequestList(){
         return new FirestoreRecyclerOptions.Builder<Request>()
                 .setQuery(getRequestQuery(),Request.class)
                 .build();
     }
-
 
     //fireStore friend list
     private Query getFriendQuery(){
@@ -129,6 +129,7 @@ public class FirebaseDataSource {
                 .collection(Constants.REQUEST_NODE)
                 .whereEqualTo("requestType","friend");
     }
+
     public FirestoreRecyclerOptions<Request> getFriendList(){
         return new FirestoreRecyclerOptions.Builder<Request>()
                 .setQuery(getFriendQuery(),Request.class)

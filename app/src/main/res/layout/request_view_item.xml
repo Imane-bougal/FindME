@@ -58,31 +58,19 @@
       android:layout_marginEnd="8dp" />
 
   <com.google.android.material.button.MaterialButton
-      android:id="@+id/accept_btn"
+      android:id="@+id/profile_btn"
       style="@style/Widget.MaterialComponents.Button.OutlinedButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"
       android:fontFamily="@font/raleway_semibold"
-      android:text="Accept"
+      android:text="View Profile"
       android:textColor="@color/colorAccent"
+      app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@+id/imageView2"
       app:layout_constraintTop_toBottomOf="@+id/request_text"
       app:strokeColor="@color/colorAccent" />
 
-  <com.google.android.material.button.MaterialButton
-      android:id="@+id/decline_btn"
-      style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:fontFamily="@font/raleway_semibold"
-      android:text="Decline"
-      android:textColor="@color/colorYellow"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.093"
-      app:layout_constraintStart_toEndOf="@+id/accept_btn"
-      app:layout_constraintTop_toBottomOf="@+id/request_text"
-      app:strokeColor="@color/colorYellow" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

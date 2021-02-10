@@ -3,6 +3,7 @@ package com.imaneb.findme.ui.main.connections.users;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.imaneb.findme.R;
 import com.imaneb.findme.adapter.UsersRecyclerAdapter;
+import com.imaneb.findme.data.repository.AuthRepository;
 import com.imaneb.findme.ui.profile.ProfileActivity;
 import com.imaneb.findme.viewModels.ViewModelProviderFactory;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -41,6 +43,9 @@ public class UsersFragment extends DaggerFragment implements UsersRecyclerAdapte
     RequestManager requestManager;
     @Inject
     ViewModelProviderFactory providerFactory;
+    @Inject
+    AuthRepository authRepository;
+
 
     public UsersFragment() {
         // Required empty public constructor
@@ -61,6 +66,7 @@ public class UsersFragment extends DaggerFragment implements UsersRecyclerAdapte
     }
 
     private void setRecyclerView() {
+        recyclerAdapter.loadUserInfo(authRepository.getCurrentUid());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(recyclerAdapter);
@@ -78,7 +84,13 @@ public class UsersFragment extends DaggerFragment implements UsersRecyclerAdapte
     @Override
     public void onStart() {
         super.onStart();
+        Log.d(TAG, "UsersViewModel: Start");
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(recyclerAdapter);
+        recyclerAdapter.setClickListener(this);
         recyclerAdapter.startListening();
+
     }
 
     @Override
