@@ -1,5 +1,8 @@
 package com.imaneb.findme.data.model;
 
+import com.google.firebase.firestore.GeoPoint;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,9 +16,62 @@ public class User {
     private String imei;
     private String birthday;
     private String gender;
+    private String g;
+    private GeoPoint l;
     private boolean online;
     private List<String> friends;
+
     private HashMap<String, Object> constraints;
+    private HashMap<String, Object> positions;
+
+    public User(String email, String displayName, String image, String status, String telephone, String imei, String birthday, String gender, String g, GeoPoint l, boolean online, List<String> friends, HashMap<String, Object> constraints, HashMap<String, Object> positions) {
+        this.email = email;
+        this.displayName = displayName;
+        this.image = image;
+        this.status = status;
+        this.telephone = telephone;
+        this.imei = imei;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.g = g;
+        this.l = l;
+        this.online = online;
+        this.friends = friends;
+        this.constraints = constraints;
+        this.positions = positions;
+    }
+
+    public String getG() {
+        return g;
+    }
+
+    public void setG(String g) {
+        this.g = g;
+    }
+
+    public GeoPoint getL() {
+        return l;
+    }
+
+    public void setL(GeoPoint l) {
+        this.l = l;
+    }
+
+    public HashMap<String, Object> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(HashMap<String, Object> positions) {
+        this.positions = positions;
+    }
+
+    public HashMap<String, Object> getPosotion() {
+        return positions;
+    }
+
+    public void setPosotion(HashMap<String, Object> position) {
+        this.positions = position;
+    }
 
 
     public List<String> getFriends() {
@@ -26,19 +82,6 @@ public class User {
         this.friends = friends;
     }
 
-    public User(String email, String displayName, String image, String status, String telephone, String imei, String birthday, String gender, boolean online, List<String> frindsImeis, HashMap<String, Object> constraints) {
-        this.email = email;
-        this.displayName = displayName;
-        this.image = image;
-        this.status = status;
-        this.telephone = telephone;
-        this.imei = imei;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.online = online;
-        this.friends = frindsImeis;
-        this.constraints = constraints;
-    }
 
 
     public HashMap<String, Object> getConstraints() {

@@ -24,7 +24,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AccountViewModel extends ViewModel {
 
-    private static final String TAG = "AccountViewModel";
+    private static final String TAG = "MapsViewModel";
     private AuthRepository authRepository;
     private DatabaseRepository databaseRepository;
     private CompositeDisposable disposable = new CompositeDisposable();

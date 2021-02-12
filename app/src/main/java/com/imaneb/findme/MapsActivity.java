@@ -1,19 +1,17 @@
 package com.imaneb.findme;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.view.MenuItem;
+import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.RequestQueue;
@@ -29,16 +27,26 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.imaneb.findme.ui.account.AccountActivity;
-import com.imaneb.findme.ui.main.MainActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
+import com.imaneb.findme.utils.Constants;
 
+import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.imperiumlabs.geofirestore.GeoQuery;
+import org.imperiumlabs.geofirestore.listeners.GeoQueryDataEventListener;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -47,15 +55,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String insertUrl = "http://192.168.42.6:8080/positions/save";
     String FindByImeiUrl = "http://192.168.42.6:8080/users/findByImei/";
     String userId = "";
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore FirebaseInstance = FirebaseFirestore.getInstance();
+    String currentUid;
+
+    public String getCurrentUid() {
+        return firebaseAuth.getCurrentUser().getUid();
+    }
+
+    public void updatePosition(double lat, double lon) {
+        CollectionReference geoFirestoreRef = FirebaseInstance.collection(Constants.USERS_NODE);
+        GeoFirestore geoFirestore = new GeoFirestore(geoFirestoreRef);
+        GeoPoint point = new GeoPoint(lat, lon);
+        geoFirestore.setLocation(firebaseAuth.getCurrentUser().getUid(), point);
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        currentUid = getCurrentUid();
+
         requestQueue = Volley.newRequestQueue(getApplicationContext());
+
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String currenImei = telephonyManager.getDeviceId();
-        String URL = FindByImeiUrl+currenImei;
+        String URL = FindByImeiUrl + currenImei;
+        /*
         JsonObjectRequest req = new JsonObjectRequest(URL,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -100,7 +129,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         );
         // add the request object to the queue to be executed
-        requestQueue.add(req);
+        requestQueue.add(req);*/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -127,7 +156,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(sydney).title("you are here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-                addPosition(location.getLatitude(), location.getLongitude());
+                //addPosition(location.getLatitude(), location.getLongitude());
+                updatePosition(location.getLatitude(), location.getLongitude());
+                getNearFriends(location.getLatitude(), location.getLongitude());
+
 
             }
 
@@ -145,7 +177,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+    Map<String,Object> stringIntegerMap=new HashMap<>();
+    private void getNearFriends(double lat ,double lon){
+        CollectionReference geoFirestoreRef = FirebaseInstance.collection(Constants.USERS_NODE);
+        GeoFirestore geoFirestore = new GeoFirestore(geoFirestoreRef);
+        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(lat, lon), 100);
+        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+            @Override
+            public void onGeoQueryReady() {
 
+            }
+
+            @Override
+            public void onGeoQueryError(@NotNull Exception e) {
+
+            }
+
+            @Override
+            public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                System.out.println(String.format("Key %s event Moved the search area at [%f,%f]", documentSnapshot.getId(), geoPoint.getLatitude(), geoPoint.getLongitude()));
+
+
+            }
+
+            @Override
+            public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {
+                System.out.println(String.format("Key %s event exit the search area at [%f,%f]", documentSnapshot.getId()));
+
+            }
+
+            @Override
+            public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                System.out.println(String.format("Key %s entered the search area at [%f,%f]", documentSnapshot.getId(), geoPoint.getLatitude(), geoPoint.getLongitude()));
+                addMarker(geoPoint.getLatitude(), geoPoint.getLongitude());
+            }
+
+            @Override
+            public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                System.out.println(String.format("Key %s event changed the search area at [%f,%f]", documentSnapshot.getId(), geoPoint.getLatitude(), geoPoint.getLongitude()));
+
+            }
+        });
+    }
+    private void addMarker(Double lat,Double lon){
+        LatLng sydney = new LatLng(lat, lon);
+        mMap.addMarker(new MarkerOptions().position(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
     void addPosition(final double lat, final double lon) {
 
         // Post params to be sent to the server

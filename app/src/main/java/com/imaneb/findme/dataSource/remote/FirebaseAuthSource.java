@@ -72,6 +72,7 @@ public class FirebaseAuthSource {
                                 map.put("birthday", birthday);
                                 map.put("telephone", "default");
                                 map.put("friends", Arrays.asList(""));
+                                map.put("positions",Arrays.asList(""));
 
                                 HashMap<String, Object> constraintData = new HashMap<>();
                                 constraintData.put("constraint_minAge",18);
