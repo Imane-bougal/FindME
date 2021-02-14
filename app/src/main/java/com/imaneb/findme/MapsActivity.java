@@ -1,16 +1,21 @@
 package com.imaneb.findme;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.NetworkResponse;
@@ -33,11 +38,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
+import com.imaneb.findme.notifications.NotificationView;
 import com.imaneb.findme.utils.Constants;
+import com.koalap.geofirestore.GeoFire;
+import com.koalap.geofirestore.GeoLocation;
+import com.koalap.geofirestore.GeoQuery;
+import com.koalap.geofirestore.GeoQueryEventListener;
 
-import org.imperiumlabs.geofirestore.GeoFirestore;
-import org.imperiumlabs.geofirestore.GeoQuery;
-import org.imperiumlabs.geofirestore.listeners.GeoQueryDataEventListener;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,8 +73,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void updatePosition(double lat, double lon) {
         CollectionReference geoFirestoreRef = FirebaseInstance.collection(Constants.USERS_NODE);
-        GeoFirestore geoFirestore = new GeoFirestore(geoFirestoreRef);
-        GeoPoint point = new GeoPoint(lat, lon);
+        GeoFire geoFirestore = new GeoFire(geoFirestoreRef);
+        GeoLocation point = new GeoLocation(lat, lon);
         geoFirestore.setLocation(firebaseAuth.getCurrentUser().getUid(), point);
 
 
@@ -155,7 +163,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(sydney).title("you are here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
                 //addPosition(location.getLatitude(), location.getLongitude());
                 updatePosition(location.getLatitude(), location.getLongitude());
                 getNearFriends(location.getLatitude(), location.getLongitude());
@@ -177,47 +184,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-    Map<String,Object> stringIntegerMap=new HashMap<>();
     private void getNearFriends(double lat ,double lon){
         CollectionReference geoFirestoreRef = FirebaseInstance.collection(Constants.USERS_NODE);
-        GeoFirestore geoFirestore = new GeoFirestore(geoFirestoreRef);
-        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(lat, lon), 100);
-        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+        GeoFire geoFirestore = new GeoFire(geoFirestoreRef);
+        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoLocation(lat, lon), 100);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                System.out.println(String.format("Key %s entered the search area at [%f,%f]",key, location.latitude, location.longitude));
+                addMarker(location.latitude, location.longitude);
+                addNotification();
+
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
             @Override
             public void onGeoQueryReady() {
 
             }
 
             @Override
-            public void onGeoQueryError(@NotNull Exception e) {
-
-            }
-
-            @Override
-            public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
-                System.out.println(String.format("Key %s event Moved the search area at [%f,%f]", documentSnapshot.getId(), geoPoint.getLatitude(), geoPoint.getLongitude()));
-
-
-            }
-
-            @Override
-            public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {
-                System.out.println(String.format("Key %s event exit the search area at [%f,%f]", documentSnapshot.getId()));
-
-            }
-
-            @Override
-            public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
-                System.out.println(String.format("Key %s entered the search area at [%f,%f]", documentSnapshot.getId(), geoPoint.getLatitude(), geoPoint.getLongitude()));
-                addMarker(geoPoint.getLatitude(), geoPoint.getLongitude());
-            }
-
-            @Override
-            public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
-                System.out.println(String.format("Key %s event changed the search area at [%f,%f]", documentSnapshot.getId(), geoPoint.getLatitude(), geoPoint.getLongitude()));
+            public void onGeoQueryError(Exception error) {
 
             }
         });
+    }
+    private void addNotification() {
+        System.out.println("adding notifications");
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.logo) //set icon for notification
+                        .setContentTitle("Notifications Example") //set title of notification
+                        .setContentText("This is a notification message")//this is notification message
+                        .setAutoCancel(true) // makes auto cancel of notification
+                        .setPriority(NotificationCompat.PRIORITY_MAX); //set priority of notification
+
+
+        Intent notificationIntent = new Intent(this, NotificationView.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //notification message will get at NotificationView
+        notificationIntent.putExtra("message", "This is a notification message");
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+
+        // Add as notification
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(1, builder.build());
     }
     private void addMarker(Double lat,Double lon){
         LatLng sydney = new LatLng(lat, lon);

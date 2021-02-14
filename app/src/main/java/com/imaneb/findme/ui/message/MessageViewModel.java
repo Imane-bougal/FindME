@@ -128,34 +128,7 @@ public class MessageViewModel extends ViewModel {
     }
 
     public String LocateFriend(){
-        final String[] imei = new String[1];
-        databaseRepository.getUserinfo(PROFILE_UID)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .toObservable()
-                .subscribe(new Observer<DocumentSnapshot>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposable.add(d);
-                    }
-
-                    @Override
-                    public void onNext(DocumentSnapshot documentSnapshot) {
-                        User user = documentSnapshot.toObject(User.class);
-                        imei[0] = user.getImei();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-        return imei[0];
+       return PROFILE_UID;
     }
 
     public void sendMessage(Message message){

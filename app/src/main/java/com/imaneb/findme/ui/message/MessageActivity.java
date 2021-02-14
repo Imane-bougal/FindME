@@ -41,6 +41,7 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
     private RecyclerView recyclerView;
     private MessageRecyclerAdapter messageRecyclerAdapter = new MessageRecyclerAdapter();
 
+
     @Inject
     ViewModelProviderFactory providerFactory;
     @Inject
@@ -66,6 +67,7 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
             @Override
             public void onChanged(User user) {
                 getSupportActionBar().setTitle(user.getDisplayName());
+
                 if(user.isOnline()){
                     getSupportActionBar().setSubtitle("Active now");
                 }
@@ -149,9 +151,9 @@ public class MessageActivity extends DaggerAppCompatActivity implements View.OnC
     }
 
     private void locateFriend() {
-        String imei = messageViewModel.LocateFriend();
+        String friendUid = messageViewModel.LocateFriend();
         Intent i = new Intent(MessageActivity.this, MapFriendActivity.class);
-        i.putExtra("Fimei", imei);
+        i.putExtra("FUid", friendUid);
         startActivity(i);
 
     }

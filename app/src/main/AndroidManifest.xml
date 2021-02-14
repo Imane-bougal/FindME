@@ -44,6 +44,10 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
+            android:name=".notifications.NotificationView"
+            android:label="Notifications"
+            android:parentActivityName=".BaseActivity"/>
+        <activity
             android:name=".ui.message.MessageActivity"
             android:label="@string/title_activity_message"
             android:parentActivityName=".ui.main.MainActivity"

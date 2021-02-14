@@ -46,7 +46,7 @@ dependencies {
 
     //geoFire
     implementation 'com.firebase:geofire-android-common:3.1.0'
-    implementation 'com.github.imperiumlabs:GeoFirestore-Android:v1.5.0'
+    implementation 'com.koalap:geofirestore-android:1.2.2'
 
     //Volley
     implementation 'com.mcxiaoke.volley:library:1.0.19'
