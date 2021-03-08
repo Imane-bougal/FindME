@@ -5,6 +5,7 @@ import java.util.List;
 public class Constants {
 
     public static final String USERS_NODE = "users";
+    public static final String POSITIONS_NODE = "users";
     public static final String PROFILE_IMAGE_NODE = "profile_image";
     public static final String FRIEND_REQUEST_NODE = "friend_request";
     public static final String FRIEND_REQUEST_TYPE = "request_type";

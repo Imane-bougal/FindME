@@ -229,7 +229,7 @@ public class FirebaseDataSource {
                 HashMap<String, Object> constraintData = new HashMap<>();
 
                 DocumentReference reference = firebaseFirestore.collection(Constants.USERS_NODE).document(currentUid);
-                reference.update("friends", FieldValue.arrayUnion(req_imei)).addOnFailureListener(new OnFailureListener() {
+                reference.update("friends", FieldValue.arrayUnion(req_uid)).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         emitter.onError(e);
@@ -242,7 +242,7 @@ public class FirebaseDataSource {
                             }
                         });
                 DocumentReference referenceReq = firebaseFirestore.collection(Constants.USERS_NODE).document(req_uid);
-                referenceReq.update("friends", FieldValue.arrayUnion(current_imei)).addOnFailureListener(new OnFailureListener() {
+                referenceReq.update("friends", FieldValue.arrayUnion(currentUid)).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         emitter.onError(e);

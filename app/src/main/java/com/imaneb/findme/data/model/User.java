@@ -22,7 +22,7 @@ public class User {
     private List<String> friends;
 
     private HashMap<String, Object> constraints;
-    private HashMap<String, Object> positions;
+
 
     public User(String email, String displayName, String image, String status, String telephone, String imei, String birthday, String gender, String g, GeoPoint l, boolean online, List<String> friends, HashMap<String, Object> constraints, HashMap<String, Object> positions) {
         this.email = email;
@@ -38,7 +38,7 @@ public class User {
         this.online = online;
         this.friends = friends;
         this.constraints = constraints;
-        this.positions = positions;
+
     }
 
     public String getG() {
@@ -57,24 +57,7 @@ public class User {
         this.l = l;
     }
 
-    public HashMap<String, Object> getPositions() {
-        return positions;
-    }
-
-    public void setPositions(HashMap<String, Object> positions) {
-        this.positions = positions;
-    }
-
-    public HashMap<String, Object> getPosotion() {
-        return positions;
-    }
-
-    public void setPosotion(HashMap<String, Object> position) {
-        this.positions = position;
-    }
-
-
-    public List<String> getFriends() {
+     public List<String> getFriends() {
         return friends;
     }
 

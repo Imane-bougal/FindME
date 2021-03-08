@@ -77,8 +77,8 @@ public class MainActivity extends DaggerAppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTextAppearance);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Connections");
-        toolbar.setNavigationIcon(R.drawable.ic_nav);
+        getSupportActionBar().setTitle("Find ME");
+        toolbar.setNavigationIcon(R.drawable.location);
     }
     private  void initBottomNavigation(){
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -130,7 +130,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         startActivity( new Intent(MainActivity.this, MainActivity.class));
     }
     private void moveToSettings() {
-        startActivity( new Intent(MainActivity.this, SettingsActivity.class));
+        startActivity( new Intent(MainActivity.this, AccountActivity.class));
     }
     private void moveToAccountSetting() {
         startActivity( new Intent(MainActivity.this, AccountActivity.class));
