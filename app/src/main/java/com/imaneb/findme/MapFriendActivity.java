@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class MapFriendActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -66,12 +68,7 @@ public class MapFriendActivity extends FragmentActivity implements OnMapReadyCal
     double latF = 0.0;
     String FriendUid="";
     LatLng TamWorth = new LatLng(0,0);
-    LatLng marhaba = new LatLng(33.249312,-8.499211);
-    LatLng m2 = new LatLng(33.247761,-8.497751);
-    LatLng m3 = new LatLng(33.246627,-8.500018);
-    LatLng m4 = new LatLng(33.248292,-8.501117);
-    LatLng m5 = new LatLng(33.245593,-8.499589);
-    LatLng m6 = new LatLng(33.243425,-8.498764);
+
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseFirestore FirebaseInstance = FirebaseFirestore.getInstance();
 
@@ -140,6 +137,7 @@ public class MapFriendActivity extends FragmentActivity implements OnMapReadyCal
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 User user = document.toObject(User.class);
+
                                 try {
                                     addMarker(user);
                                 } catch (IOException e) {
@@ -183,7 +181,24 @@ public class MapFriendActivity extends FragmentActivity implements OnMapReadyCal
                 .resize(100, 100)
                 .transform(new CircleTransform())
                 .onlyScaleDown().into(target);
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,16));
+        List<HashMap<String, Object>> positions = user.getPositions();
+        for (int i = 0; i < positions.size() - 1; i++) {
+            LatLng src = new LatLng((double)positions.get(i).get("latitude"),(double)positions.get(i).get("longitude"));
+            LatLng dest = new LatLng((double)positions.get(i+1).get("latitude"),(double)positions.get(i+1).get("longitude"));
+            // mMap is the Map Object
+            mMap.addPolyline((new PolylineOptions()).add(
+                    src,dest
+            ).
+                    // below line is use to specify the width of poly line.
+                            width(5)
+                    // below line is use to add color to our poly line.
+                    .color(Color.BLUE)
+                    // below line is to make our poly line geodesic.
+                    .geodesic(true));
+
+        }
         mMap.addPolyline((new PolylineOptions()).add(sydney, TamWorth).
                 // below line is use to specify the width of poly line.
                         width(5)
@@ -191,13 +206,7 @@ public class MapFriendActivity extends FragmentActivity implements OnMapReadyCal
                 .color(Color.RED)
                 // below line is to make our poly line geodesic.
                 .geodesic(true));
-        mMap.addPolyline((new PolylineOptions()).add(sydney,marhaba,m2,m3,m4,m5,m6).
-                // below line is use to specify the width of poly line.
-                        width(5)
-                // below line is use to add color to our poly line.
-                .color(Color.BLUE)
-                // below line is to make our poly line geodesic.
-                .geodesic(true));
+
 
     }
 }
